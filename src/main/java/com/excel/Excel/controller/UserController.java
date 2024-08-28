@@ -2,7 +2,9 @@ package com.excel.Excel.controller;
 
 
 import com.excel.Excel.service.UserServiceImpl;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,15 +33,13 @@ public class UserController {
     }
 
     @GetMapping("/tocsv")
-    public ResponseEntity<byte[]> downloadUsers() {
-        try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
-            userService.writeUsersToCSV(os);
-
-            return ResponseEntity.ok()
-                    .contentType(MediaType.TEXT_PLAIN)  // Show CSV data as plain text in response
-                    .body(os.toByteArray());
-        } catch (IOException e) {
-            return ResponseEntity.status(500).body(null);
+    public void exportCSV(HttpServletResponse response) {
+        response.setContentType("text/csv");
+        response.setHeader("Content-Disposition", "attachment; filename=\\\"users.csv\\\"");
+        try {
+            userService.writeUsersToCSV(response.getOutputStream());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

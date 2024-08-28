@@ -48,10 +48,10 @@ public class UserServiceImpl{
         }
     }
 
-    public void writeUsersToCSV(OutputStream os) throws IOException {
+    public void writeUsersToCSV(OutputStream os) throws Exception {
         List<UserDetails> users = userRepository.findAll();
 
-        try (CSVPrinter printer = new CSVPrinter(new PrintWriter(os), CSVFormat.DEFAULT)) {
+        try (CSVPrinter printer = new CSVPrinter(new OutputStreamWriter(os), CSVFormat.DEFAULT.withHeader("userName","userEmail"))) {
             for (UserDetails userDetails : users) {
                 printer.printRecord(userDetails.getUserName(), userDetails.getUserEmail());
             }
